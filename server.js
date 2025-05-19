@@ -1,6 +1,5 @@
-// server.js
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const path = require('path');
 
 const app = express();
@@ -9,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.get('/run-script', async (req, res) => {
   try {
     const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser', // Railway & Render içindir
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
@@ -34,12 +34,11 @@ app.get('/run-script', async (req, res) => {
     const inputHandle = await turnikePage.$(fileInputSelector);
     await inputHandle.uploadFile(filePath);
 
-    console.log('📷 QR kod yüklendi.');
-    res.send('✅ QR kod başarıyla yüklendi!');
-    // await browser.close(); // test için kapalı
+    console.log('📷 QR kod başarıyla yüklendi.');
+    res.send('✅ QR kod yüklendi!');
   } catch (err) {
     console.error('❌ Hata:', err.message);
-    res.status(500).send('❌ Hata: ' + err.message);
+    res.status(500).send('Hata: ' + err.message);
   }
 });
 
